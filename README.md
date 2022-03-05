@@ -454,15 +454,15 @@ kullanılmaktadır. En az bir IP adresi ya da host değeri zorunludur.
 Bağlantı cümleciği içerisinde kullanılabilecek olan ayarlar ve
 açıklamaları aşağıdadır.
 
-  **Ayar (Option)**      **Açıklama**                                                                                                                                                                                                                     **Varsayılan**
-  ---------------------- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- ----------------
-  clientCache            İstemci taraflı önbellek özelliğini aktif eder. “true” ve “false” değerleri alır. “true” değeri verebilmek için Redis versiyonunun 6.0.0 ve üzerinde olması gereklidir.                                                          false
-  password               Redis bağlantısı için eğer varsa şifre değerini alır                                                                                                                                                                             null
-  db                     Redis bağlantısı için veritabanı numarasını belirtir.                                                                                                                                                                            0
-  connectRetry           Bağlantı sağlanamaması durumunda aynı ip adresi için kaç bağlantı denemesi yapacağını belirtir. Tüm adresleri denedikten sonra hala bağlantı sağlanamaması durumunda yeniden baştan başlayarak bağlantı denemeleri devam eder.   3
-  connectRetryInterval   Her bağlantı denemesi sonrasında yeni denemenin kaç ms sonrasında başlayacağını belirtir.                                                                                                                                        300
-  receiveBufferSize      TCP yuvası için alım tampon bellek büyüklüğünü belirtir.                                                                                                                                                                         65536
-  sendBufferSize         TCP yuvası için gönderim tampon bellek büyüklüğünü belirtir.                                                                                                                                                                     65536
+  | **Ayar (Option)**   |   **Açıklama**    |   **Varsayılan**  |
+  | -----------------   |   ------------    |   --------------  |
+  | clientCache |   İstemci taraflı önbellek özelliğini aktif eder. “true” ve “false” değerleri alır. “true” değeri verebilmek için Redis versiyonunun 6.0.0 ve üzerinde olması gereklidir. |   false   |
+  | password    |   Redis bağlantısı için eğer varsa şifre değerini alır    |   null    |
+  | db  |   Redis bağlantısı için veritabanı numarasını belirtir.   |   0   |
+  | connectRetry    |   Bağlantı sağlanamaması durumunda aynı ip adresi için kaç bağlantı denemesi yapacağını belirtir. Tüm adresleri denedikten sonra hala bağlantı sağlanamaması durumunda yeniden baştan başlayarak bağlantı denemeleri devam eder.  |   3   |
+  | connectRetryInterval    |   Her bağlantı denemesi sonrasında yeni denemenin kaç ms sonrasında başlayacağını belirtir.   |   300 |
+  | receiveBufferSize   |   TCP yuvası için alım tampon bellek büyüklüğünü belirtir.    |   65536   |
+  | sendBufferSize  |   TCP yuvası için gönderim tampon bellek büyüklüğünü belirtir.    |   65536   |
 
 -   **ExecuteAsync(cancellationToken, param1, param2…) Metodu**
 
