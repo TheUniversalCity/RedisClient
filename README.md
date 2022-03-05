@@ -1,5 +1,5 @@
-Önbellekleme(Cache) Teknolojileri ve RESP3 Protokol Destekli Yüksek
-Performanslı .Net Standart Redis Client
+
+## Önbellekleme(Cache) Teknolojileri ve RESP3 Protokol Destekli Yüksek Performanslı .Net Standart Redis Client
 
 -   **Cache(Önbellek) Nedir?**
 
@@ -417,16 +417,16 @@ protokolünü deneyebilirsiniz.
 **TheUniversalCity.RedisClient** aşağıdaki uygulama türlerinde
 kullanılabilir.
 
-  **.NET uygulama**            **Sürüm desteği**
-  ---------------------------- ------------------------------------------
-  .NET ve .NET Core            2.0, 2.1, 2.2, 3.0, 3.1, 5.0, 6.0
-  .NET Framework               4.6.1, 4.6.2, 4.7.0, 4.7.1, 4.7.2, 4.8.0
-  Mono                         5.4, 6.4
-  Xamarin.iOS                  10.14, 12.16
-  Xamarin.Mac                  3.8, 5.16
-  Xamarin.Android              8.0, 10.0
-  Evrensel Windows Platformu   10.0.16299, TBD
-  Unity                        2018,1
+  | **.NET uygulama**               |   **Sürüm desteği**  |
+  | ----------------------------    |   ------------------------------------------  |
+  | .NET ve .NET Core               |   2.0, 2.1, 2.2, 3.0, 3.1, 5.0, 6.0   |
+  | .NET Framework                  |   4.6.1, 4.6.2, 4.7.0, 4.7.1, 4.7.2, 4.8.0    |
+  | Mono                            |   5.4, 6.4    |
+  | Xamarin.iOS                     |   10.14, 12.16    |
+  | Xamarin.Mac                     |   3.8, 5.16   |
+  | Xamarin.Android                 |   8.0, 10.0   |
+  | Evrensel Windows Platformu      |   10.0.16299, TBD |
+  | Unity                           |   2018,1  |
 
 -   **İstemci Yaratma ve Bağlantı**
 
