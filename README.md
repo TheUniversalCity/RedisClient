@@ -239,8 +239,7 @@ iletim protokolüdür. Bir TCP bağlantısı sağlandığında fiziksel olarak
 üzerinde birbirinden bağımsız iki yönde de aynı anda veri iletimi
 yapılabilir. Bu veri iletimi ile iki taraf birbiri ile haberleşmiş olur.
 
-![](duplex.jpg){width="3.961538713910761in"
-height="3.363313648293963in"}
+![](duplex.jpg)
 
 TCP tanımında taraflar “Aktif” ve “Pasif” olarak adlandırılırlar.
 
@@ -301,8 +300,7 @@ cevaplarının aynı sırada aynı numaradaki istemciye iletilmesini garanti
 etmektedir. Bu tekniğe iletişim teknolojilerinde sıklıkla kullanılan
 **“Çoğullama (Multiplexing)”** denilmektedir.
 
-![](multiplexing.jpg){width="6.076922572178478in"
-height="2.452716535433071in"}
+![](multiplexing.jpg)
 
 Fiziksel olarak tek kanaldan yapılan veri transferlerinde aynı anda bir
 yönde yalnızca bir veri transferi yapılabilir. Bir çok farklı mesajın
@@ -432,26 +430,24 @@ kullanılabilir.
 
 -   **İstemci Yaratma ve Bağlantı**
 
-> **RedisClient** sınıfı **static** bir **CreateClientAsync** metodu
-> içerir. Bu metod kullanılarak yeni bir RedisClient nesnesi yaratılır
-> ve Redis ile bağlantı kurulur. Bu metodun iki farklı aşırı
-> yüklemesi(**override**) bulunmaktadır.
->
-> var client = RedisClient.CreateClientAsync(\_connectionString)
->
-> ve
->
-> var client = RedisClient.CreateClientAsync(new RedisConfiguration())
->
-> **“\_connectionString”** string bir ifadedir. Bağlantı için gerekli
-> ayarların verildiği bağlantı cümleciğidir. Aşağıdaki yapıda
-> kullanılmaktadır. En az bir IP adresi ya da host değeri zorunludur.
->
-> **“\[ipAddress|host\]\[:\[port\]\],
-> \[ipAddress2|host2\]\[:\[port\]\],\[optionKey\]=\[value\]
-> ,\[optionKey2\]=\[value\]”**
->
-> Örnek: “localhost,clientCache=true”
+**RedisClient** sınıfı **static** bir **CreateClientAsync** metodu
+içerir. Bu metod kullanılarak yeni bir RedisClient nesnesi yaratılır
+ve Redis ile bağlantı kurulur. Bu metodun iki farklı aşırı
+yüklemesi(**override**) bulunmaktadır.
+
+var client = RedisClient.CreateClientAsync(\_connectionString)
+
+ve
+
+var client = RedisClient.CreateClientAsync(new RedisConfiguration())
+
+**“\_connectionString”** string bir ifadedir. Bağlantı için gerekli
+ayarların verildiği bağlantı cümleciğidir. Aşağıdaki yapıda
+kullanılmaktadır. En az bir IP adresi ya da host değeri zorunludur.
+
+**“\[ipAddress|host\]\[:\[port\]\],\[ipAddress2|host2\]\[:\[port\]\],\[optionKey\]=\[value\],\[optionKey2\]=\[value\]”**
+
+Örnek: “localhost,clientCache=true”
 
 -   **Ayarlar (Options)**
 
