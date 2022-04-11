@@ -54,7 +54,7 @@ namespace TheUniversalCity.RedisClient
 
                     if (indexOfColon != -1)
                     {
-                        DnsEndPoints.Add(new DnsEndPoint(segment.Substring(0, indexOfColon + 1), int.Parse(segment.Substring(indexOfColon))));
+                        DnsEndPoints.Add(new DnsEndPoint(segment.Substring(0, indexOfColon), int.Parse(segment.Substring(indexOfColon + 1))));
                     }
                     else
                     {
