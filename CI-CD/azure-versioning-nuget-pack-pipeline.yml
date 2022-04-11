@@ -60,7 +60,7 @@ steps:
     nobuild: true
     versioningScheme: byEnvVar
     versionEnvVar: 'GitVersion.SemVer'
-
+     
 - script: |
     git config --global user.email "azuredevops@theuniversalcity.com"
     git config --global user.name "Azure Devops"
