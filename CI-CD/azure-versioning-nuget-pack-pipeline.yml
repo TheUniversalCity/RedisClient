@@ -62,6 +62,9 @@ steps:
     versionEnvVar: 'GitVersion.SemVer'
 
 - script: |
+    git config --global user.email "azuredevops@theuniversalcity.com"
+    git config --global user.name "Azure Devops"
+
     if git show-ref --tags tag1 --quiet; then
         echo "$(GitVersion.NugetVersionV2) tag already exists" 
     else 
