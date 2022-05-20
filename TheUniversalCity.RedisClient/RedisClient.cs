@@ -234,8 +234,6 @@ namespace TheUniversalCity.RedisClient
                 {
                     while ((obj = RedisObjectDeterminator.Determine(redisClient.ReceiverEnumerator)) is RedisPushType pushObj)
                     {
-                        OnPushMessageReceived?.Invoke(pushObj);
-
                         if (pushObj[0].ToString() == "invalidate")
                         {
                             foreach (var item in pushObj[1] as RedisArray)
@@ -243,6 +241,8 @@ namespace TheUniversalCity.RedisClient
                                 InvalidateSubscription(item);
                             }
                         }
+
+                        OnPushMessageReceived?.Invoke(pushObj);
                     }
                 }
                 catch (Exception ex)
