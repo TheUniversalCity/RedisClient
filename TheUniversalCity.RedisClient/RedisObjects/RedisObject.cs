@@ -48,16 +48,21 @@ namespace TheUniversalCity.RedisClient.RedisObjects
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static string[] ReadBlobEofCrLf(IEnumerator<byte> enumerator, long length, Encoding encoding)
-        {
+        public static string[] ReadBlobEofCrLf(IEnumerator<byte> enumerator,
+                                               long length,
+                                               Encoding encoding
+#if DEBUG
+                                               ,
+                                               Action<string> logger
+#endif
+        ) {
             var byteContainer = ReadBlobEofCrLf(enumerator, length);
             var stringContainer = new string[byteContainer.Length];
 
-            for (int i = 0; i < byteContainer.Length; i++)
-            {
+            for (int i = 0; i < byteContainer.Length; i++) {
                 stringContainer[i] = encoding.GetString(byteContainer[i]);
 #if DEBUG
-                Console.WriteLine($"{nameof(ReadBlobEofCrLf)} : Value =>{stringContainer[i]}, i=> {i}");
+                logger($"{nameof(ReadBlobEofCrLf)} : Value =>{stringContainer[i]}, i=> {i}");
 #endif
             }
 

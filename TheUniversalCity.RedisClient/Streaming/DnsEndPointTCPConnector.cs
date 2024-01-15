@@ -16,6 +16,7 @@ namespace TheUniversalCity.RedisClient.Streaming
         private const int DEFAULT_SEND_BUFFER_SIZE = short.MaxValue;
         private const int DEFAULT_CONNECT_RETRY_COUNT = 3;
         private const int DEFAULT_CONNECT_RETRY_INTERVAL = 300;
+        private readonly Action<string> _logger;
 
         public event Action<Exception, Enumerator> OnException;
         public event Action<DnsEndPoint, Enumerator> OnConnectionTryFailed;
@@ -25,11 +26,13 @@ namespace TheUniversalCity.RedisClient.Streaming
 
         public DnsEndPointTCPConnector(
             DnsEndPoint[] endPointList,
+            Action<string> logger,
             int receiverBufferSize = DEFAULT_RECEIVER_BUFFER_SIZE,
             int sendBufferSize = DEFAULT_SEND_BUFFER_SIZE,
             int connectRetry = DEFAULT_CONNECT_RETRY_COUNT,
-            int connectRetryInterval = DEFAULT_CONNECT_RETRY_INTERVAL)
+            int connectRetryInterval = DEFAULT_CONNECT_RETRY_INTERVAL) 
         {
+            _logger = logger;
             EndPointList = endPointList;
             ReceiverBufferSize = receiverBufferSize;
             SendBufferSize = sendBufferSize;
@@ -220,7 +223,7 @@ namespace TheUniversalCity.RedisClient.Streaming
 
                         Receiver.OnReceiverDisconnect?.Invoke(exception, this);
 
-                        Console.WriteLine("Not Connected on Receive Buffer");
+                        Receiver._logger("Not Connected on Receive Buffer");
 
                         Connect();
 
@@ -240,13 +243,13 @@ namespace TheUniversalCity.RedisClient.Streaming
                     manualResetEvent.WaitOne();
                 }
 #if DEBUG
-                Console.WriteLine($"{nameof(Send)} Enter, senderOffset => {e.Offset}, BytesTransferred => {e.BytesTransferred}");
+                Receiver._logger($"{nameof(Send)} Enter, senderOffset => {e.Offset}, BytesTransferred => {e.BytesTransferred}");
 #endif
                 if (e.SocketError != SocketError.Success)
                 {
                     var exception = new RedisClientNotConectedException("Not Connected", new SocketException((int)e.SocketError));
 #if DEBUG
-                    Console.WriteLine("Send Exception: " + exception.Message);
+                    Receiver._logger("Send Exception: " + exception.Message);
 #endif
                     Receiver.OnException?.Invoke(exception, this);
                 }
@@ -283,7 +286,7 @@ namespace TheUniversalCity.RedisClient.Streaming
 
                             Receiver.OnSenderDisconnect?.Invoke(new RedisClientNotConectedException("Not Connected"), this);
 
-                            Console.WriteLine("Not Connected on Send Buffer");
+                            Receiver._logger("Not Connected on Send Buffer");
                             //connectSignalEvent.WaitOne();
 
                             //Thread.Sleep(300);
@@ -548,7 +551,7 @@ namespace TheUniversalCity.RedisClient.Streaming
 
                                 connectSignalEvent.Set();
 
-                                Console.WriteLine($"Socket connected. Endpoint => {Receiver.EndPointList[selectedEndpointIndex]}");
+                                Receiver._logger($"Socket connected. Endpoint => {Receiver.EndPointList[selectedEndpointIndex]}");
                                 Receiver.OnConnected?.Invoke(this);
 
                                 return;
