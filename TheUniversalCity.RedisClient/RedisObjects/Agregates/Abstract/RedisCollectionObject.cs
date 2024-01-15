@@ -13,21 +13,31 @@ namespace TheUniversalCity.RedisClient.RedisObjects.Agregates.Abstract
 
         public bool IsReadOnly => false;
 
-        public static TRedisCollectionObject GetRedisCollectionObject<TRedisCollectionObject>(IEnumerator<byte> enumerator) where TRedisCollectionObject : RedisCollectionObject, new()
-        {
+        public static TRedisCollectionObject GetRedisCollectionObject<TRedisCollectionObject>(IEnumerator<byte> enumerator
+#if DEBUG
+                                                                                              ,
+                                                                                              System.Action<string> logger
+#endif
+        ) where TRedisCollectionObject : RedisCollectionObject, new() {
             var length = int.Parse(ReadLineEofCrLf(enumerator, Encoding.ASCII));
             var collectionObject = new TRedisCollectionObject();
 
-            if (length == -1)
-            {
+            if (length == -1) {
                 return collectionObject;
             }
 
             collectionObject.Items = new List<RedisObject>(length);
 
-            for (int i = 0; i < length; i++)
-            {
-                collectionObject.Add(RedisObjectDeterminator.Determine(enumerator));
+            for (int i = 0; i < length; i++) {
+                collectionObject.Add(
+                    RedisObjectDeterminator.Determine(
+                        enumerator
+#if DEBUG
+                        ,
+                        logger
+#endif
+                    )
+                );
             }
 
             return collectionObject;

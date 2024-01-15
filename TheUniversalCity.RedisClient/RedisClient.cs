@@ -61,6 +61,7 @@ namespace TheUniversalCity.RedisClient
 
             Receiver = new DnsEndPointTCPConnector(
                 configuration.DnsEndPoints.ToArray(),
+                Configuration.Logger,
                 configuration.ReceiveBufferSize,
                 configuration.SendBufferSize,
                 configuration.ConnectRetry,
@@ -102,7 +103,7 @@ namespace TheUniversalCity.RedisClient
         private void ReceiverEnumerator_OnConnected(DnsEndPointTCPConnector.Enumerator arg1)
         {
 #if DEBUG
-            Console.WriteLine(nameof(ReceiverEnumerator_OnConnected));
+            Configuration.Logger(nameof(ReceiverEnumerator_OnConnected));
 #endif
             Interlocked.CompareExchange(ref recentlyConnected, 1, 0);
             emergencyStartAutoEvent.Set();
@@ -147,13 +148,13 @@ namespace TheUniversalCity.RedisClient
             }
             catch (RedisClientNotConectedException ex)
             {
-                Console.WriteLine("Start Error : " + ex.Message);
+                Configuration.Logger("Start Error : " + ex.Message);
             }
             finally
             {
                 Interlocked.CompareExchange(ref recentlyConnected, 0, 2);
                 ReceiverEnumerator.EndEmergency();
-                Console.WriteLine("Start Emergency Disposing");
+                Configuration.Logger("Start Emergency Disposing");
             }
 
             //startComplete.Set();
@@ -187,7 +188,7 @@ namespace TheUniversalCity.RedisClient
 
             var count = redisCompletedTasks.Count - arg2.bufferedMessageCounter;
 #if DEBUG
-            Console.WriteLine($"{nameof(ReceiverEnumerator_OnReceiverDisconnect)} : Count => {count}, taskCompletionSourcesCount => {redisCompletedTasks.Count}, arg2.bufferedMessageCounter => {arg2.bufferedMessageCounter}");
+            Configuration.Logger($"{nameof(ReceiverEnumerator_OnReceiverDisconnect)} : Count => {count}, taskCompletionSourcesCount => {redisCompletedTasks.Count}, arg2.bufferedMessageCounter => {arg2.bufferedMessageCounter}");
 #endif
             for (int i = 0; i < count; i++)
             {
@@ -230,35 +231,36 @@ namespace TheUniversalCity.RedisClient
 
             while (!disposedValue)
             {
-                try
-                {
-                    while ((obj = RedisObjectDeterminator.Determine(redisClient.ReceiverEnumerator)) is RedisPushType pushObj)
-                    {
-                        if (pushObj[0].ToString() == "invalidate")
-                        {
-                            foreach (var item in pushObj[1] as RedisArray)
-                            {
+                try {
+                    while ((obj = RedisObjectDeterminator.Determine(
+                               redisClient.ReceiverEnumerator
+#if DEBUG
+                               ,
+                               Configuration.Logger
+#endif
+
+                           )) is RedisPushType pushObj) {
+                        if (pushObj[0].ToString() == "invalidate") {
+                            foreach (var item in pushObj[1] as RedisArray) {
                                 InvalidateSubscription(item);
                             }
                         }
 
                         OnPushMessageReceived?.Invoke(pushObj);
                     }
-                }
-                catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     OnException?.Invoke(ex, ReceiverEnumerator.Socket);
 
                     continue;
                 }
 #if DEBUG
-                Console.WriteLine($"{nameof(ReceiveWorker)} :emergencyFlag =>{ReceiverEnumerator.EmergencyFlag}, taskCompletionSourcesCount => {redisCompletedTasks.Count}, emergentTaskCompletionSourcesCount =>{emergentRedisCompletedTasks.Count}, obj=> {obj}, isnull => {obj == null}, type => {obj?.GetType().FullName}");
+                Configuration.Logger($"{nameof(ReceiveWorker)} :emergencyFlag =>{ReceiverEnumerator.EmergencyFlag}, taskCompletionSourcesCount => {redisCompletedTasks.Count}, emergentTaskCompletionSourcesCount =>{emergentRedisCompletedTasks.Count}, obj=> {obj}, isnull => {obj == null}, type => {obj?.GetType().FullName}");
 #endif
                 TaskCompletionSource<RedisObject> tcs;
 
                 if (ReceiverEnumerator.EmergencyFlag)
                 {
-                    Console.WriteLine("Receiver Managed Thread Id => " + Thread.CurrentThread.ManagedThreadId);
+                    Configuration.Logger("Receiver Managed Thread Id => " + Thread.CurrentThread.ManagedThreadId);
 
                     tcs = emergentRedisCompletedTasks.Take();
                 }
@@ -267,7 +269,7 @@ namespace TheUniversalCity.RedisClient
                     tcs = redisCompletedTasks.Take();
                 }
 #if DEBUG
-                Console.WriteLine($"{nameof(ReceiveWorker)} :");
+                Configuration.Logger($"{nameof(ReceiveWorker)} :");
 #endif
 
                 tcs.TrySetResult(obj);
@@ -300,7 +302,7 @@ namespace TheUniversalCity.RedisClient
             var result = await ExecuteAsync(TaskCreationOptions.RunContinuationsAsynchronously, cancellationToken, segments);
 
 #if DEBUG
-            Console.WriteLine($"{nameof(ExecuteAsync)} : Command =>{string.Join(" ", commandParams)}, Result => {result}");
+            Configuration.Logger($"{nameof(ExecuteAsync)} : Command =>{string.Join(" ", commandParams)}, Result => {result}");
 #endif
 
             return result;
@@ -313,7 +315,7 @@ namespace TheUniversalCity.RedisClient
             var result = ExecuteAsync(TaskCreationOptions.None, cancellationToken, segments).ConfigureAwait(false).GetAwaiter().GetResult();
 
 #if DEBUG
-            Console.WriteLine($"{nameof(ExecuteAsync)} : Command =>{string.Join(" ", commandParams)}, Result => {result}");
+            Configuration.Logger($"{nameof(ExecuteAsync)} : Command =>{string.Join(" ", commandParams)}, Result => {result}");
 #endif
 
             return result;
@@ -333,7 +335,7 @@ namespace TheUniversalCity.RedisClient
                 var result = ReceiverEnumerator.SendData(commandParams, (transferredBytes) =>
                 {
 #if DEBUG
-                    Console.WriteLine($"{nameof(ExecuteAsync)} : ");
+                    Configuration.Logger($"{nameof(ExecuteAsync)} : ");
 #endif
                     redisCompletedTasks.Add(tcs);
                 });
@@ -368,12 +370,12 @@ namespace TheUniversalCity.RedisClient
         {
             var tcs = new TaskCompletionSource<RedisObject>(TaskCreationOptions.RunContinuationsAsynchronously);
 #if DEBUG
-            Console.WriteLine($"{nameof(ExecuteEmergentAsync)} : Command =>{string.Join(" ", commandParams)}");
+            Configuration.Logger($"{nameof(ExecuteEmergentAsync)} : Command =>{string.Join(" ", commandParams)}");
 #endif
             if (!await ReceiverEnumerator.SendEmergentDataAsync(GetSegments(commandParams), () =>
              {
 #if DEBUG
-                 Console.WriteLine($"{nameof(ExecuteEmergentAsync)} : ");
+                 Configuration.Logger($"{nameof(ExecuteEmergentAsync)} : ");
 #endif
                  emergentRedisCompletedTasks.Add(tcs);
              }))

@@ -9,16 +9,29 @@ namespace TheUniversalCity.RedisClient.RedisObjects.BlobStrings
     {
         public const byte DETERMINATIVE_CHAR = (byte)'!';
 
-        public static RedisBlobError Parse(IEnumerator<byte> enumerator)
-        {
+        public static RedisBlobError Parse(IEnumerator<byte> enumerator
+#if DEBUG
+                                           ,
+                                           System.Action<string> logger
+#endif
+        ) {
             var length = long.Parse(ReadLineEofCrLf(enumerator, Encoding.ASCII));
 
-            if (length == -1)
-            {
+            if (length == -1) {
                 return new RedisBlobError();
             }
 
-            return new RedisBlobError { Values = ReadBlobEofCrLf(enumerator, length, Encoding.UTF8) };
+            return new RedisBlobError {
+                Values = ReadBlobEofCrLf(
+                    enumerator,
+                    length,
+                    Encoding.UTF8
+#if DEBUG
+                    ,
+                    logger
+#endif
+                )
+            };
         }
 
         public static implicit operator string(RedisBlobError redisBlobError)

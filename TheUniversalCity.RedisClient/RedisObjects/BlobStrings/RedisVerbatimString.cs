@@ -13,12 +13,15 @@ namespace TheUniversalCity.RedisClient.RedisObjects.BlobStrings
 
         public string Prefix { get; set; }
 
-        public static RedisVerbatimString Parse(IEnumerator<byte> enumerator)
-        {
+        public static RedisVerbatimString Parse(IEnumerator<byte> enumerator
+#if DEBUG
+                                                ,
+                                                Action<string> logger
+#endif
+        ) {
             var length = long.Parse(ReadLineEofCrLf(enumerator, Encoding.ASCII));
 
-            if (length == -1)
-            {
+            if (length == -1) {
                 return new RedisVerbatimString();
             }
 
@@ -35,11 +38,21 @@ namespace TheUniversalCity.RedisClient.RedisObjects.BlobStrings
 
             enumerator.MoveNext(); // : character
 
-            if (enumerator.Current != COLON) { throw new InvalidOperationException(); }
+            if (enumerator.Current != COLON) {
+                throw new InvalidOperationException();
+            }
 
-            return new RedisVerbatimString { 
-                Prefix = Encoding.ASCII.GetString(bytesPrefix), 
-                Values = ReadBlobEofCrLf(enumerator, length - 4, Encoding.UTF8)
+            return new RedisVerbatimString {
+                Prefix = Encoding.ASCII.GetString(bytesPrefix),
+                Values = ReadBlobEofCrLf(
+                    enumerator,
+                    length - 4,
+                    Encoding.UTF8
+#if DEBUG
+                    ,
+                    logger
+#endif
+                )
             };
         }
 

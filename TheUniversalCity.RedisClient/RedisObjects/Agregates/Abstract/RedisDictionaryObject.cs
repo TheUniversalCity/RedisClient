@@ -16,21 +16,38 @@ namespace TheUniversalCity.RedisClient.RedisObjects.Agregates.Abstract
 
         public int Count => Dictionary.Count;
 
-        public static TRedisDictionaryObject GetRedisDictionaryObject<TRedisDictionaryObject>(IEnumerator<byte> enumerator) where TRedisDictionaryObject : RedisDictionaryObject, new()
-        {
+        public static TRedisDictionaryObject GetRedisDictionaryObject<TRedisDictionaryObject>(IEnumerator<byte> enumerator
+#if DEBUG
+                                                                                              ,
+                                                                                              System.Action<string> logger
+#endif
+        ) where TRedisDictionaryObject : RedisDictionaryObject, new() {
             var length = int.Parse(ReadLineEofCrLf(enumerator, Encoding.ASCII));
             var collectionObject = new TRedisDictionaryObject();
 
-            if (length == -1)
-            {
+            if (length == -1) {
                 return collectionObject;
             }
 
             collectionObject.Dictionary = new Dictionary<RedisObject, RedisObject>(length);
 
-            for (int i = 0; i < length; i++)
-            {
-                collectionObject.Dictionary.Add(RedisObjectDeterminator.Determine(enumerator), RedisObjectDeterminator.Determine(enumerator));
+            for (int i = 0; i < length; i++) {
+                collectionObject.Dictionary.Add(
+                    RedisObjectDeterminator.Determine(
+                        enumerator
+#if DEBUG
+                        ,
+                        logger
+#endif
+                    ),
+                    RedisObjectDeterminator.Determine(
+                        enumerator
+#if DEBUG
+                        ,
+                        logger
+#endif
+                    )
+                );
             }
 
             return collectionObject;

@@ -24,6 +24,8 @@ namespace TheUniversalCity.RedisClient
         public int ReceiveBufferSize { get { return Options.ContainsKey(RECEIVE_BUFFER_SIZE) ? int.Parse(Options[RECEIVE_BUFFER_SIZE]) : 65536; } }
         public int SendBufferSize { get { return Options.ContainsKey(SEND_BUFFER_SIZE) ? int.Parse(Options[SEND_BUFFER_SIZE]) : 65536; } }
 
+        public Action<string> Logger { get; set; } = Console.WriteLine;
+
         public Dictionary<string, string> Options { get; set; } = new Dictionary<string, string>();
 
         public RedisConfiguration(string connectionString)
